@@ -3,6 +3,8 @@ name: go1.14
 on:
   workflow_dispatch:
   push:
+  pull_request:
+    branches: [ main ]
   schedule:
     # Monthly test. Runs at 19:00 UTC (AM 04:00 JST) on day-of-month 1
     - cron: '0 19 1 * *'
