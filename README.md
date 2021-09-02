@@ -20,7 +20,11 @@ Usage of prettybench:
 ```
 
 ```shellsession
-$ # Basic usage - sort by high iteration count and print results prettily
+$ # Basic usage
+$ go test -bench=. | prettybench
+```
+```shellsession
+$ # Sort by iteration (faster iteration)
 $ go test -bench=. | prettybench -sort iter
 ```
 
