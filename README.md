@@ -1,36 +1,122 @@
-# Prettybench
+[![Go Report Card](https://goreportcard.com/badge/github.com/KEINOS/go-prettybench)](https://goreportcard.com/report/github.com/KEINOS/go-prettybench)
+[![CodeQL](https://github.com/KEINOS/go-prettybench/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/KEINOS/go-prettybench/actions/workflows/codeql-analysis.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/KEINOS/go-prettybench.svg)](https://pkg.go.dev/github.com/KEINOS/go-prettybench)
 
-A tool for transforming `go test`'s benchmark output a bit to make it nicer for humans.
+# Prettybench <sub><sup><sup>FORK</sup></sup></sub>
 
-## Problem
+`prettybench` is a formating tool to **"pretty-print" the benchmark results of Go**. It helps a bit to make it nicer for humans to read ;-)
 
-Go benchmarks are great, particularly when used in concert with benchcmp. But the output can be a bit hard to
-read:
+> This repo, [KEINOS/go-prettybench](https://github.com/KEINOS/go-prettybench), is a fork of [cespare/prettybench](https://github.com/cespare/prettybench) with `-sort` option implementation.
 
-![before](/screenshots/before.png)
+## Usage
 
-## Solution
+```shellsession
+$ prettybench -h
+Usage of prettybench:
+  -no-passthrough
+        Don't print non-benchmark lines
+  -sort string
+        Sort by column (string: name, iter, time, bytes, allocs)
+```
 
-    $ go get github.com/cespare/prettybench
-    $ go test -bench=. | prettybench
+```shellsession
+$ # Basic usage - sort by high iteration count and print results prettily
+$ go test -bench=. | prettybench -sort iter
+```
 
-![after](/screenshots/after.png)
+To sort more than one column, pipe the command as below.
 
-* Column headers
-* Columns are aligned
-* Time output is adjusted to convenient units
+```shellsession
+$ # Find the fastest benchmark
+$ go test -bench=. | prettybench -sort=iter | prettybench -sort=time | prettybench -sort=bytes
+```
+
+## Sample Output
+
+```shellsession
+$ go test -failfast -benchmem -shuffle=on -benchtime=10s -count=5 -bench . | prettybench -sort iter
+-test.shuffle 1630544600714497930
+goos: linux
+goarch: amd64
+pkg: github.com/KEINOS/go-blake3-example
+cpu: Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz
+PASS
+benchmark                   iter        time/iter   bytes alloc        allocs
+---------                   ----        ---------   -----------        ------
+BenchmarkBlake3_32Byte-2   21348     579.62 μs/op        0 B/op   0 allocs/op
+BenchmarkBlake3_32Byte-2   20786     580.41 μs/op        0 B/op   0 allocs/op
+BenchmarkBlake3_64Byte-2   20275    1309.79 μs/op        0 B/op   0 allocs/op
+BenchmarkBlake3_32Byte-2   19292     698.38 μs/op        0 B/op   0 allocs/op
+BenchmarkBlake3_64Byte-2   18704     651.92 μs/op        0 B/op   0 allocs/op
+BenchmarkBlake3_32Byte-2   18151     604.64 μs/op        0 B/op   0 allocs/op
+BenchmarkBlake3_32Byte-2   16812     688.91 μs/op        0 B/op   0 allocs/op
+BenchmarkBlake3_64Byte-2   15891     818.48 μs/op        0 B/op   0 allocs/op
+BenchmarkBlake3_64Byte-2   15384    1756.33 μs/op        0 B/op   0 allocs/op
+BenchmarkBlake3_64Byte-2   15085     814.88 μs/op        0 B/op   0 allocs/op
+BenchmarkFNV1_4Byte-2       8626    1930.83 μs/op        8 B/op   1 allocs/op
+BenchmarkFNV1_4Byte-2       8566    1956.97 μs/op        8 B/op   1 allocs/op
+BenchmarkFNV1A_4Byte-2      8452    1499.16 μs/op        8 B/op   1 allocs/op
+BenchmarkFNV1A_4Byte-2      8396    1401.46 μs/op        8 B/op   1 allocs/op
+BenchmarkFNV1A_4Byte-2      8137    1661.25 μs/op        8 B/op   1 allocs/op
+BenchmarkFNV1A_4Byte-2      8035    1442.88 μs/op        8 B/op   1 allocs/op
+BenchmarkFNV1_4Byte-2       7635    1725.90 μs/op        8 B/op   1 allocs/op
+BenchmarkFNV1A_4Byte-2      7329    1369.91 μs/op        8 B/op   1 allocs/op
+BenchmarkFNV1_4Byte-2       6999    1625.71 μs/op        8 B/op   1 allocs/op
+BenchmarkFNV1_4Byte-2       6796    1662.90 μs/op        8 B/op   1 allocs/op
+BenchmarkSHA3_32Byte-2      3169    5188.47 μs/op      960 B/op   4 allocs/op
+BenchmarkSHA3_32Byte-2      3120    4498.84 μs/op      960 B/op   4 allocs/op
+BenchmarkSHA3_32Byte-2      2427    6027.57 μs/op      960 B/op   4 allocs/op
+BenchmarkSHA3_32Byte-2      2258    5363.21 μs/op      960 B/op   4 allocs/op
+BenchmarkSHA3_32Byte-2      2218    5628.21 μs/op      960 B/op   4 allocs/op
+BenchmarkSHA3_64Byte-2      1698    6975.16 μs/op     1024 B/op   4 allocs/op
+BenchmarkSHA3_64Byte-2      1662    7139.66 μs/op     1024 B/op   4 allocs/op
+BenchmarkSHA3_64Byte-2      1653    7034.54 μs/op     1024 B/op   4 allocs/op
+BenchmarkSHA3_64Byte-2      1633    8689.48 μs/op     1024 B/op   4 allocs/op
+BenchmarkSHA3_64Byte-2      1574    7693.19 μs/op     1024 B/op   4 allocs/op
+ok      github.com/KEINOS/go-blake3-example     557.763s
+```
+
+## Insatall
+
+Download the corresponding binary of your architecture (CPU and OS) from the releases page and place it in your PATH.
+
+Or, you can install the binary via Go as well (recommended.) Run the below in temp dir:
+
+- `go install KEINOS/go-prettybench@latest` (Go v1.16 or above)
+- `go get -u KEINOS/go-prettybench@latest` (Go v1.16 or below)
+
+> **Note:** As of Go v.1.17 installing executables with '`go get -u`' in module mode is deprecated.
+
+## Statuses
+
+- Supported Go versions and monthly test results:
+  - [![go1.14](https://github.com/KEINOS/go-prettybench/actions/workflows/runGo1_14.yml/badge.svg)](https://github.com/KEINOS/go-prettybench/actions/workflows/runGo1_14.yml)
+  [![go1.15](https://github.com/KEINOS/go-prettybench/actions/workflows/runGo1_15.yml/badge.svg)](https://github.com/KEINOS/go-prettybench/actions/workflows/runGo1_15.yml)
+  [![go1.16](https://github.com/KEINOS/go-prettybench/actions/workflows/runGo1_16.yml/badge.svg)](https://github.com/KEINOS/go-prettybench/actions/workflows/runGo1_16.yml)
+  [![go1.17](https://github.com/KEINOS/go-prettybench/actions/workflows/runGo1_17.yml/badge.svg)](https://github.com/KEINOS/go-prettybench/actions/workflows/runGo1_17.yml)
+- Security Alert Status
+  - [Security advisories](https://github.com/KEINOS/go-prettybench/security/advisories)
+  - [Code scanning alerts (CodeQL)](https://github.com/KEINOS/go-prettybench/security/code-scanning)
+  - [Dependencies vulnerability scan (Dependabot)](https://github.com/KEINOS/go-prettybench/security/dependabot)
 
 ## Notes
 
-* Right now the units for the time are chosen based on the smallest value in the column.
-* Prettybench has to buffer all the rows of output before it can print them (for column formatting), so you
-  won't see intermediate progress. If you want to see that too, you could tee your output so that you see the
-  unmodified version as well. If you do this, you'll want to use the prettybench's `-no-passthrough` flag so
-  it doesn't print all the other lines (because then they'd be printed twice):
+- About the branch:
+  - [main](https://github.com/KEINOS/go-prettybench/tree/original): Main branch of this repo to PR.
+  - [original](https://github.com/KEINOS/go-prettybench/tree/original): Equal to upstream's [`master`](https://github.com/cespare/prettybench/tree/master) branch.
+- Right now the units for the time are chosen based on the smallest value in the column.
+- Prettybench has to buffer all the rows of output before it can print them (for
+  column formatting), so you won't see intermediate progress. If you want to see
+  that too, you could tee your output so that you see the unmodified version as
+  well. If you do this, you'll want to use the prettybench's `-no-passthrough`
+  flag so it doesn't print all the other lines (because then they'd be printed
+  twice):
 
         $ go test -bench=. | tee >(prettybench -no-passthrough)
 
-## To Do (maybe)
+- Any PR for better are welcome!
 
-* Handle benchcmp output
-* Change the units for non-time columns as well (these are generally OK though).
+## Wishlist
+
+- [x] Add a `-sort` flag to sort by the given column
+- [ ] Show average and dispersity (in ±%) per benchmark name (if more than one exists)
