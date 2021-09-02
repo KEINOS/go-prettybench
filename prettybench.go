@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/KEINOS/go-prettybench/prettify"
-	bench "golang.org/x/tools/benchmark/parse"
+	"golang.org/x/tools/benchmark/parse"
 )
 
 var (
@@ -69,7 +69,7 @@ func main() {
 
 // ParseLine parses a line of benchmark output to testing.Benchmark.
 // It returns an errNotBenchLine error if the line doesn't seem to contain benchmark data.
-func ParseLine(line string) (*bench.Benchmark, error) {
+func ParseLine(line string) (*parse.Benchmark, error) {
 	if !benchLineMatcher.MatchString(line) {
 		return nil, errNotBenchLine
 	}
@@ -79,5 +79,5 @@ func ParseLine(line string) (*bench.Benchmark, error) {
 		return nil, errNotBenchLine
 	}
 
-	return bench.ParseLine(line)
+	return parse.ParseLine(line)
 }

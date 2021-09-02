@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	bench "golang.org/x/tools/benchmark/parse"
+	"golang.org/x/tools/benchmark/parse"
 )
 
 // ----------------------------------------------------------------------------
@@ -18,7 +18,7 @@ import (
 // ----------------------------------------------------------------------------
 
 type BenchOutputGroup struct {
-	Lines    []*bench.Benchmark
+	Lines    []*parse.Benchmark
 	Measured int // Columns which are in use
 }
 
@@ -33,7 +33,7 @@ type Table struct {
 
 // AddLine adds the "line" to the Lines' field and updates Measured field to
 // indicate which measurements ware used.
-func (g *BenchOutputGroup) AddLine(line *bench.Benchmark) {
+func (g *BenchOutputGroup) AddLine(line *parse.Benchmark) {
 	g.Lines = append(g.Lines, line)
 	g.Measured |= line.Measured // bitwise OR to up the bit flags
 }
@@ -45,17 +45,17 @@ func (g *BenchOutputGroup) ColumnNames() []string {
 	columnNames := []string{"benchmark", "iter", "time/iter"}
 
 	// Add "throughput" column if found bitwisely
-	if (g.Measured & bench.MBPerS) > 0 {
+	if (g.Measured & parse.MBPerS) > 0 {
 		columnNames = append(columnNames, "throughput")
 	}
 
 	// Add "bytes alloc" column if found bitwisely
-	if (g.Measured & bench.AllocedBytesPerOp) > 0 {
+	if (g.Measured & parse.AllocedBytesPerOp) > 0 {
 		columnNames = append(columnNames, "bytes alloc")
 	}
 
 	// Add "allocs" column if found bitwisely
-	if (g.Measured & bench.AllocsPerOp) > 0 {
+	if (g.Measured & parse.AllocsPerOp) > 0 {
 		columnNames = append(columnNames, "allocs")
 	}
 
@@ -64,7 +64,7 @@ func (g *BenchOutputGroup) ColumnNames() []string {
 
 // FormattRow returns a row with formatted column values from the given
 // benchmark line.
-func (g *BenchOutputGroup) FormattRow(line *bench.Benchmark) (row []string) {
+func (g *BenchOutputGroup) FormattRow(line *parse.Benchmark) (row []string) {
 	// Create a row
 	row = []string{
 		line.Name,
@@ -72,15 +72,15 @@ func (g *BenchOutputGroup) FormattRow(line *bench.Benchmark) (row []string) {
 		g.FormatTimeUnit(line.NsPerOp), // uniform nanoseconds to ns/μs/ms/s
 	}
 
-	if (g.Measured & bench.MBPerS) > 0 {
+	if (g.Measured & parse.MBPerS) > 0 {
 		row = append(row, FormatMegaBytesPerSecond(line))
 	}
 
-	if (g.Measured & bench.AllocedBytesPerOp) > 0 {
+	if (g.Measured & parse.AllocedBytesPerOp) > 0 {
 		row = append(row, FormatBytesAllocPerOp(line))
 	}
 
-	if (g.Measured & bench.AllocsPerOp) > 0 {
+	if (g.Measured & parse.AllocsPerOp) > 0 {
 		row = append(row, FormatAllocsPerOp(line))
 	}
 
@@ -188,8 +188,8 @@ func (g *BenchOutputGroup) FormatTimeUnit(ns float64) string {
 // ----------------------------------------------------------------------------
 
 // FormatAllocsPerOp formats the AllocsPerOp value to an "allocs/op" string.
-func FormatAllocsPerOp(l *bench.Benchmark) string {
-	if (l.Measured & bench.AllocsPerOp) == 0 {
+func FormatAllocsPerOp(l *parse.Benchmark) string {
+	if (l.Measured & parse.AllocsPerOp) == 0 {
 		return ""
 	}
 
@@ -197,8 +197,8 @@ func FormatAllocsPerOp(l *bench.Benchmark) string {
 }
 
 // FormatBytesAllocPerOp formats the AllocedBytesPerOp value to "B/op" string.
-func FormatBytesAllocPerOp(l *bench.Benchmark) string {
-	if (l.Measured & bench.AllocedBytesPerOp) == 0 {
+func FormatBytesAllocPerOp(l *parse.Benchmark) string {
+	if (l.Measured & parse.AllocedBytesPerOp) == 0 {
 		return ""
 	}
 
@@ -211,8 +211,8 @@ func FormatIterations(iter int) string {
 }
 
 // FormatMegaBytesPerSecond formats the MBPerS bench value to "MB/s" string.
-func FormatMegaBytesPerSecond(l *bench.Benchmark) string {
-	if (l.Measured & bench.MBPerS) == 0 {
+func FormatMegaBytesPerSecond(l *parse.Benchmark) string {
+	if (l.Measured & parse.MBPerS) == 0 {
 		return ""
 	}
 
