@@ -21,24 +21,24 @@ Usage of prettybench:
 
 ```shellsession
 $ # Basic usage
-$ go test -bench=. | prettybench
+$ go test -bench=. | go-prettybench
 ```
 ```shellsession
 $ # Sort by iteration (faster iteration)
-$ go test -bench=. | prettybench -sort iter
+$ go test -bench=. | go-prettybench -sort iter
 ```
 
 To sort more than one column, pipe the command as below.
 
 ```shellsession
 $ # Find the fastest benchmark
-$ go test -bench=. | prettybench -sort=iter | prettybench -sort=time | prettybench -sort=bytes
+$ go test -bench=. | go-prettybench -sort=iter | go-prettybench -sort=time | go-prettybench -sort=bytes
 ```
 
 ## Sample Output
 
 ```shellsession
-$ go test -failfast -benchmem -shuffle=on -benchtime=10s -count=5 -bench . | prettybench -sort iter
+$ go test -failfast -benchmem -shuffle=on -benchtime=10s -count=5 -bench . | go-prettybench -sort iter
 -test.shuffle 1630544600714497930
 goos: linux
 goarch: amd64
