@@ -86,8 +86,8 @@ Download the corresponding binary of your architecture (CPU and OS) from the rel
 
 Or, you can install the binary via Go as well (recommended.) Run the below in temp dir:
 
-- `go install KEINOS/go-prettybench@latest` (Go v1.16 or above)
-- `go get -u KEINOS/go-prettybench@latest` (Go v1.16 or below)
+- `go install github.com/KEINOS/go-prettybench@latest` (Go v1.16 or above)
+- `go get -u github.com/KEINOS/go-prettybench@latest` (Go v1.16 or below)
 
 > **Note:** As of Go v.1.17 installing executables with '`go get -u`' in module mode is deprecated.
 
