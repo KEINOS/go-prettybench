@@ -6,6 +6,8 @@ package prettify
 import (
 	"bytes"
 	"fmt"
+	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -17,11 +19,15 @@ import (
 //  Structs
 // ----------------------------------------------------------------------------
 
+// BenchOutputGroup holds a set of benchmark results and the options used to
+// format them.
 type BenchOutputGroup struct {
-	Lines    []*parse.Benchmark
-	Measured int // Columns which are in use
+	ColNameSort string             // Column ID to sort by column if not empty
+	Lines       []*parse.Benchmark // Benchmark lines parsed
+	Measured    int                // Columns which are in use
 }
 
+// Table holds a set of cells and the maximum width of each column.
 type Table struct {
 	MaxLengths []int
 	Cells      [][]string
@@ -87,6 +93,58 @@ func (g *BenchOutputGroup) FormattRow(line *parse.Benchmark) (row []string) {
 	return row
 }
 
+// GetLessFunc returns a function to compare two lines by the given column name.
+func (g *BenchOutputGroup) GetLessFunc(nameCol string) (isLessThan func(int, int) bool) {
+	switch nameCol {
+	case "name": // Sort by benchmark column
+		// Return true if a is less than b (ascending order)
+		isLessThan = func(a int, b int) bool {
+			return g.Lines[a].Name < g.Lines[b].Name
+		}
+	case "iter": // Sort by iter column
+		// Return true if b is less than a (descending order)
+		isLessThan = func(a int, b int) bool {
+			return g.Lines[b].N < g.Lines[a].N
+		}
+	case "time": // Sort by time/iter column
+		// Return true if a is less than b (ascending order)
+		isLessThan = func(a int, b int) bool {
+			return g.Lines[a].NsPerOp < g.Lines[b].NsPerOp
+		}
+	case "bytes": // Sort by bytes alloc column
+		// Return true if b is less than a (ascending order)
+		isLessThan = func(a int, b int) bool {
+			return g.Lines[a].AllocedBytesPerOp < g.Lines[b].AllocedBytesPerOp
+		}
+	case "allocs": // Sort by alloc column
+		// Return true if b is less than a (descending order)
+		isLessThan = func(a int, b int) bool {
+			return g.Lines[b].AllocsPerOp < g.Lines[a].AllocsPerOp
+		}
+	default: // Do nothing
+		fmt.Fprintln(os.Stderr, "* error: unknown column name:", nameCol)
+		isLessThan = func(a int, b int) bool {
+			return false
+		}
+	}
+
+	return isLessThan
+}
+
+// Sort sorts by columns specified by command option.
+func (g *BenchOutputGroup) Sort() {
+	isLessThan := g.GetLessFunc(g.ColNameSort)
+
+	sort.Slice(g.Lines, isLessThan)
+	/*
+		list := g.Lines
+
+		sort.Slice(list, isLessThan)
+
+		g.Lines = list
+	*/
+}
+
 // String is a stringer for BenchOutputGroup which returns a formatted strin of
 // the benchmark results.
 func (g *BenchOutputGroup) String() string {
@@ -96,7 +154,13 @@ func (g *BenchOutputGroup) String() string {
 
 	// Get column names
 	columnNames := g.ColumnNames()
-	// Get blank table with headers(columnNames and underlines)
+
+	// Sort if option was set
+	if g.ColNameSort != "" {
+		g.Sort()
+	}
+
+	// Get formatted table
 	table := g.Tabulate(columnNames)
 
 	// Loop table's cells and write them to the buffer
@@ -125,8 +189,8 @@ func (g *BenchOutputGroup) String() string {
 	return buf.String()
 }
 
-// Tabulate creates a blank table with an underlined header of the given column
-// names.
+// Tabulate returns a Table object with header of the given column names containing
+// formatted comumns.
 func (g *BenchOutputGroup) Tabulate(columnNames []string) *Table {
 	table := &Table{Cells: [][]string{columnNames}}
 

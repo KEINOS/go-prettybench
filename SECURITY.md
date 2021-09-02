@@ -20,7 +20,7 @@ As a basic manner, we run the below automated checks on any push to the repo and
 
 ## Testing Policy
 
-Besides 100% coverage of unit testing, we use [GolangCI-Lint](https://golangci-lint.run/) for static analysis and lint checking.
+Besides to try keep high coverage persentage of the unit tests, we use [GolangCI-Lint](https://golangci-lint.run/) for static analysis and lint checking.
 
 - See configuration: [./.golangci.yml](https://github.com/KEINOS/go-prettybench/.golangci.yml)
 
