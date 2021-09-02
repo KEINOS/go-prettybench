@@ -23,6 +23,7 @@ var (
 
 	// Flag options.
 	noPassthrough = flag.Bool("no-passthrough", false, "Don't print non-benchmark lines")
+	sortColumn    = flag.String("sort", "", "Sort by column (string: name, iter, time, bytes, allocs)")
 
 	// OsSTDIN is a copy of os.Stdin to ease mocking in tests.
 	OsSTDIN = os.Stdin
@@ -36,6 +37,8 @@ func main() {
 	currentBenchmark := &prettify.BenchOutputGroup{}
 	scanner := bufio.NewScanner(OsSTDIN)
 
+	currentBenchmark.ColNameSort = *sortColumn
+
 	// Loop each line of bench results from the input and print the parsed output
 	for scanner.Scan() {
 		lineText := scanner.Text()
@@ -45,7 +48,7 @@ func main() {
 		case errNotBenchLine:
 			// Spit out the parsed lines if the line reaches to test result ans is "ok"
 			if okLineMatcher.MatchString(lineText) {
-				fmt.Print(currentBenchmark)                     // Spits out
+				fmt.Print(currentBenchmark)                     // Call stringer and print it
 				currentBenchmark = &prettify.BenchOutputGroup{} // Reset
 			}
 
