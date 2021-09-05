@@ -82,10 +82,6 @@ ok      github.com/KEINOS/go-blake3-example     557.763s
 
 ## Insatall
 
-Download the corresponding binary of your architecture (CPU and OS) from the releases page and place it in your PATH.
-
-Or, you can install the binary via Go as well (recommended.) Run the below in temp dir:
-
 - `go install github.com/KEINOS/go-prettybench@latest` (Go v1.16 or above)
 - `go get -u github.com/KEINOS/go-prettybench@latest` (Go v1.16 or below)
 
