@@ -24,7 +24,7 @@ $ # Basic usage
 $ go test -bench=. | go-prettybench
 ```
 ```shellsession
-$ # Sort by iteration (faster iteration)
+$ # Sort by iteration (faster iteration order)
 $ go test -bench=. | go-prettybench -sort iter
 ```
 
