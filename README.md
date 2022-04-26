@@ -2,11 +2,11 @@
 [![CodeQL](https://github.com/KEINOS/go-prettybench/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/KEINOS/go-prettybench/actions/workflows/codeql-analysis.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/KEINOS/go-prettybench.svg)](https://pkg.go.dev/github.com/KEINOS/go-prettybench)
 
-# Prettybench <sub><sup><sup>FORK</sup></sup></sub>
+# Go-Prettybench <sub><sup><sup>FORK</sup></sup></sub>
 
-`prettybench` is a formating tool to **"pretty-print" the benchmark results of Go**. It helps a bit to make it nicer for humans to read ;-)
+[go-prettybench](https://github.com/KEINOS/go-prettybench) is a fork of [cespare's prettybench](https://github.com/cespare/prettybench) but with `-sort` option implementation.
 
-> This repo, [KEINOS/go-prettybench](https://github.com/KEINOS/go-prettybench), is a fork of [cespare/prettybench](https://github.com/cespare/prettybench) with `-sort` option implementation.
+The [prettybench](https://github.com/cespare/prettybench) is an awesome formating tool to **"pretty-print" the benchmark results of Go**. It helps to make it nicer for humans to read. [go-prettybench](https://github.com/KEINOS/go-prettybench) simply adds an option to sort. ;-)
 
 ## Usage
 
@@ -118,5 +118,5 @@ ok      github.com/KEINOS/go-blake3-example     557.763s
 
 ## Wishlist
 
-- [x] Add a `-sort` flag to sort by the given column
-- [ ] Show average and dispersity (in ±%) per benchmark name (if more than one exists)
+- [x] ~~Add a `-sort` flag to sort by the given column~~
+- [ ] Add a '-stat' flag showing the mean and variance (±%) of each benchmark name (if more than one exists). In the meantime, it is recommended to use [benchstat](https://pkg.go.dev/golang.org/x/perf/cmd/benchstat).
